@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="FRKvpy" name="Test" projectType="audioplug" jucerVersion="5.4.3"
-              pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
               pluginFormats="buildAU,buildStandalone,buildVST3" pluginAUMainType="'aufx'"
               pluginVST3Category="Fx" pluginRTASCategory="0" pluginAAXCategory="0"
               pluginVSTCategory="kPlugCategEffect">

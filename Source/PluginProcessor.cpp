@@ -168,15 +168,15 @@ void TestAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& m
 			sin_currentangle += angledelta;
 
 			//input
-			//pushNextSampleIntoFifo(currentsample * level);
-			pushNextSampleIntoFifo(inputsound[sample]);
+			pushNextSampleIntoFifo(currentsample * level);
+			//pushNextSampleIntoFifo(inputsound[sample]);
 
 			//output
 			//leftbuffer[sample] = (currentsample * level);		
 			//rightbuffer[sample] = (currentsample * level);
 
-			//leftbuffer[sample] = (gOutFifo[gRover - inFifoLatency]);		
-			//rightbuffer[sample] = (gOutFifo[gRover - inFifoLatency]);
+			leftbuffer[sample] = (gOutFifo[gRover - inFifoLatency]);		
+			rightbuffer[sample] = (gOutFifo[gRover - inFifoLatency]);
 			
 		}
 }
@@ -215,6 +215,9 @@ void TestAudioProcessor::pushNextSampleIntoFifo(float sample) {
 		// [3] Analysis 
 		Analysis();
 
+		// [3.b] [pitch detection]
+		//PitchDetection();
+
 		zeromem(gFFTworksp, sizeof(gFFTworksp));
 		// [4] Processing / Pitch Shifting 
 		Pitchshift(gSynMagn, gSynFreq, pitchshift);
@@ -250,6 +253,13 @@ void TestAudioProcessor::pushNextSampleIntoFifo(float sample) {
 		}
 
 	}
+}
+
+void TestAudioProcessor::PitchDetection(void) {
+
+
+
+
 }
 
 

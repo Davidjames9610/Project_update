@@ -68,6 +68,8 @@ public:
 	void Analysis(void);
 	void Pitchshift(float gSynMagnf[], float gSynFreqf[], float pitchshiftf);
 	void ReSynthesis(float gSynMagnf[], float gSynFreqf[], float gSumPhasef[]);
+	
+	void PitchDetection(void);
 
 
 

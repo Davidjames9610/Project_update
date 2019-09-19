@@ -84,12 +84,28 @@ public:
 		scopeSize = 512,							 
 	};
 
-	double angledelta = (440 * 2.0 * M_PI) / 44100;
+
+	void PitchShift2D(int MidiNo);
+	void ReSynthesis2D(int MidiNo);
+
+	double angledelta = (220 * 2.0 * M_PI) / 44100;
 
 	//440 = a5, 880 = a6
-	float pitchshift = 0.5;
-	float pitchshift2 = 0.8;
+	float pitchshift = 1.2;
+	float pitchshift2 = 1.3;
 
+	float input_note1 = 440;
+	float input_note2 = 523;
+
+	//Aray
+	float MidiArray[6] = {220, 277.18, 329.63, 440, 554.37, 659.25};
+	float PitchShiftArray[6] = {0,0,0,0,0,0};
+
+	//Synthesis Arrays
+	float SynthArrayFreq[6][fftFrameSize]; 
+	float SynthArrayMag[6][fftFrameSize];
+
+	float SumPhase2D[6][fftFrameSize] = {0.};
 
 private:
     //==============================================================================
@@ -151,5 +167,8 @@ private:
 	double sin_currentangle = 0;
 
 	Synthesiser my_synth;
+
+	// Aray work 
+
 
 };

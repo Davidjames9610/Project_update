@@ -35,6 +35,9 @@ TestAudioProcessor::TestAudioProcessor()
 	memset(gSumPhase, 0, fftFrameSize * sizeof(float));
 	memset(gSumPhase2, 0, fftFrameSize * sizeof(float));
 
+	//memset(SumPhase2D, 0, fftFrameSize * sizeof(float));
+
+
 	memset(gOutputAccum, 0, (2 * fftFrameSize) * sizeof(float));
 
 	memset(gOutFifo, 0, (fftFrameSize) * sizeof(float));
@@ -168,8 +171,8 @@ void TestAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& m
 			sin_currentangle += angledelta;
 
 			//input
-			pushNextSampleIntoFifo(currentsample * level);
-			//pushNextSampleIntoFifo(inputsound[sample]);
+			//pushNextSampleIntoFifo(currentsample * level);
+			pushNextSampleIntoFifo(inputsound[sample]);
 
 			//output
 			//leftbuffer[sample] = (currentsample * level);		
@@ -216,19 +219,34 @@ void TestAudioProcessor::pushNextSampleIntoFifo(float sample) {
 		Analysis();
 
 		// [3.b] [pitch detection]
-		//PitchDetection();
+		PitchDetection();
 
 		zeromem(gFFTworksp, sizeof(gFFTworksp));
 		// [4] Processing / Pitch Shifting 
-		Pitchshift(gSynMagn, gSynFreq, pitchshift);
-		Pitchshift(gSynMagn2, gSynFreq2, pitchshift2);
+		//Pitchshift(gSynMagn, gSynFreq, PitchShiftArray[0]);
+		//Pitchshift(gSynMagn2, gSynFreq2, PitchShiftArray[1]);
 
+
+		//new pitchshift function.
+		//zero arrays
+		//memset(SynthArrayFreq, 0, fftFrameSize * sizeof(float));
+		//memset(SynthArrayMag, 0, fftFrameSize * sizeof(float));
+
+		//PitchShift2D();
+		PitchShift2D(0);
+		PitchShift2D(1);
+		PitchShift2D(2);
+		PitchShift2D(3);
 
 		// [5] Re-Synthesis
-		ReSynthesis(gSynMagn, gSynFreq, gSumPhase);
-		ReSynthesis(gSynMagn2, gSynFreq2, gSumPhase2);
+		//ReSynthesis(gSynMagn, gSynFreq, gSumPhase);
+		//ReSynthesis(gSynMagn2, gSynFreq2, gSumPhase2);
 
-		//void TestAudioProcessor::ReSynthesis(float gSynMagnf[], float gSynFreqf[], float gSumPhasef[])
+		//2D Version...
+		ReSynthesis2D(0);
+		ReSynthesis2D(1);
+		ReSynthesis2D(2);
+		ReSynthesis2D(3);
 
 		//zero negative frequencies....
 		for (k = fftFrameSize + 2; k < 2 * fftFrameSize; k++) gFFTworksp[k] = 0.;
@@ -258,8 +276,26 @@ void TestAudioProcessor::pushNextSampleIntoFifo(float sample) {
 void TestAudioProcessor::PitchDetection(void) {
 
 
+	float tmpmgn = 0;
+	int tmpindex = 0;
+	float largestpitch;
 
+	for (k = 0; k < fftFrameSize2; k++) {
+		if (gAnaMagn[k] > tmpmgn) {
+			tmpmgn = gAnaMagn[k];
+			tmpindex = k;
+		}
+	}
+	
 
+	//when only change the pitch if the new frequency is within our rang...
+	if ((gAnaFreq[tmpindex] > 100) && (gAnaFreq[tmpindex] < 1050)) {
+		largestpitch = gAnaFreq[tmpindex];
+		for (k = 0; k < 6; k++) {
+			PitchShiftArray[k] = roundf((MidiArray[k] / largestpitch) * 100) / 100;
+			//pitchshift2 = roundf((midi_array[1] / largestpitch) * 100) / 100;
+		}
+	}
 }
 
 
@@ -279,6 +315,57 @@ void TestAudioProcessor::Pitchshift(float gSynMagnf[], float gSynFreqf[], float 
 
 }
 
+void TestAudioProcessor::PitchShift2D(int MidiNo) {
+
+	//SynthArrayFreq, SynthArrayMag, 0, PitchShiftArray[0]
+
+	//zero array quick
+	for (k = 0; k < fftFrameSize; k++) {
+		SynthArrayMag[MidiNo][k] = 0.;
+		SynthArrayFreq[MidiNo][k] = 0.;
+	}
+
+	for (k = 0; k < fftFrameSize2; k++) {
+		index = k * PitchShiftArray[MidiNo];
+		if (index < fftFrameSize2) {
+			SynthArrayMag[MidiNo][index] += gAnaMagn[k];
+			SynthArrayFreq[MidiNo][index] = gAnaFreq[k] * PitchShiftArray[MidiNo];
+		}
+
+	}
+
+}
+
+void TestAudioProcessor::ReSynthesis2D(int MidiNo) {
+
+	
+	for (k = 0; k < fftFrameSize2; k++) {
+
+		//we get our magnitude and true frequnecy
+		magn = SynthArrayMag[MidiNo][k];
+		tmp = SynthArrayFreq[MidiNo][k];
+
+		//subtract bin mid frequency
+		tmp -= (double)k * freqPerbin;
+
+		//get bin deviation from freq deviation
+		tmp /= freqPerbin;
+
+		//osamp into acount
+		tmp = 2.0 * M_PI * tmp / osamp;
+
+		//add the overlap phase advance back in 
+		tmp += (double)k * excpt;
+
+		//accumulate delta phase to get bin phase
+		SumPhase2D[MidiNo][k] += tmp;
+		phase = SumPhase2D[MidiNo][k];
+
+		//get real and imag parts and re-interleave;
+		gFFTworksp[2 * k] += (magn * cos(phase)); //* 0.5);
+		gFFTworksp[2 * k + 1] += (magn * sin(phase));// * 0.5);
+	}
+}
 
 
 void TestAudioProcessor::ReSynthesis(float gSynMagnf[], float gSynFreqf[], float gSumPhasef[]) {
@@ -306,8 +393,8 @@ void TestAudioProcessor::ReSynthesis(float gSynMagnf[], float gSynFreqf[], float
 		phase = gSumPhasef[k];
 
 		//get real and imag parts and re-interleave;
-		gFFTworksp[2 * k] += (magn * cos(phase) * 0.5);
-		gFFTworksp[2 * k + 1] += (magn * sin(phase) * 0.5);
+		gFFTworksp[2 * k] += (magn * cos(phase)); //* 0.5);
+		gFFTworksp[2 * k + 1] += (magn * sin(phase));// * 0.5);
 	}
 }
 

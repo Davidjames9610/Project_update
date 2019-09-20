@@ -50,6 +50,16 @@ TestAudioProcessor::TestAudioProcessor()
 	excpt = 2. * M_PI * ((double)StepSize) / (double)fftFrameSize;
 
 
+	//initialise synths...
+	my_synth.clearVoices();
+
+	for (int sc = 0; sc < 6; sc++) {
+		my_synth.addVoice(new SynthVoice());
+	}
+	my_synth.clearSounds();
+	my_synth.addSound(new SynthSound());
+
+
 
 }
 
@@ -124,6 +134,9 @@ void TestAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+
+	my_synth.setCurrentPlaybackSampleRate(sampleRate);
+
 }
 
 void TestAudioProcessor::releaseResources()
@@ -158,7 +171,11 @@ bool TestAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) con
 
 void TestAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
-	//sin stuff:
+
+
+	PopulatePitchArray();
+
+	my_synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 	auto level = 0.25f;
 
 	auto* leftbuffer = buffer.getWritePointer(0);
@@ -182,7 +199,9 @@ void TestAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& m
 			rightbuffer[sample] = (gOutFifo[gRover - inFifoLatency]);
 			
 		}
+
 }
+
 
 //==============================================================================
 bool TestAudioProcessor::hasEditor() const
@@ -272,6 +291,26 @@ void TestAudioProcessor::pushNextSampleIntoFifo(float sample) {
 
 	}
 }
+
+
+
+void TestAudioProcessor::PopulatePitchArray(void) {
+
+	//what happens if no pitch??
+
+	float frequency_voice;
+
+	for (k = 0; k < 6; k++) {
+
+		auto freq_synth = my_synth.getVoice(k);
+		int freq_test = (freq_synth->getCurrentlyPlayingNote());
+		MidiArray[k] = Midi2Hz_Array[freq_test];
+
+		//auto freq_string = (String)freq_test;
+		//DBG(freq_string);
+	}
+}
+
 
 void TestAudioProcessor::PitchDetection(void) {
 

@@ -11,6 +11,8 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "SynthSound.h"
+#include "SynthVoice.h"
 
 #define M_PI 3.14159265358979323846
 #define MAX_FRAME_LENGTH 8192  //(2^13)
@@ -68,8 +70,8 @@ public:
 	void Analysis(void);
 	void Pitchshift(float gSynMagnf[], float gSynFreqf[], float pitchshiftf);
 	void ReSynthesis(float gSynMagnf[], float gSynFreqf[], float gSumPhasef[]);
-	
 	void PitchDetection(void);
+	void PopulatePitchArray(void);
 
 
 
@@ -106,6 +108,13 @@ public:
 	float SynthArrayMag[6][fftFrameSize];
 
 	float SumPhase2D[6][fftFrameSize] = {0.};
+
+	// midi array 
+
+	float Midi2Hz_Array[109] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,27.5,29.1,30.9,32.7,34.6,36.7,38.9,41.2,43.7,46.2,49,51.9,55,58.3,61.7,65.4,69.3,73.4,77.8,82.4,87.3,92.5,98,103.8,110,116.5,123.5,130.8,138.6,146.8,155.6,164.8,174.6,185,196,207.7,220,233.1,246.9,261.626,277.2,293.7,311.1,329.6,349.2,370,392,415.3,440,466.2,493.9,523.3,554.4,587.3,622.3,659.3,698.5,740,784,830.6,880,932.3,987.8,1046.5,1108.7,1174.7,1244.5,1318.5,1396.9,1480,1568,1661.2,1760,1864.7,1975.5,2093,2217.5,2349.3,2489,2637,2793.8,2960,3136,3322.4,3520,3729.3,3951.1, 4186};
+
+
+	// Synth pointer
 
 private:
     //==============================================================================
@@ -167,8 +176,7 @@ private:
 	double sin_currentangle = 0;
 
 	Synthesiser my_synth;
-
-	// Aray work 
-
+	SynthVoice* myVoice;
+	
 
 };

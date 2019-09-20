@@ -188,15 +188,17 @@ void TestAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& m
 			sin_currentangle += angledelta;
 
 			//input
-			//pushNextSampleIntoFifo(currentsample * level);
-			pushNextSampleIntoFifo(inputsound[sample]);
+			pushNextSampleIntoFifo(currentsample * level);
+			//pushNextSampleIntoFifo(inputsound[sample]);
 
 			//output
 			//leftbuffer[sample] = (currentsample * level);		
 			//rightbuffer[sample] = (currentsample * level);
 
-			leftbuffer[sample] = (gOutFifo[gRover - inFifoLatency]);		
-			rightbuffer[sample] = (gOutFifo[gRover - inFifoLatency]);
+			//conditional?
+
+			leftbuffer[sample] = (gOutFifo[gRover - inFifoLatency]) * noteOnVel;		
+			rightbuffer[sample] = (gOutFifo[gRover - inFifoLatency]) * noteOnVel;
 			
 		}
 
@@ -254,8 +256,8 @@ void TestAudioProcessor::pushNextSampleIntoFifo(float sample) {
 		//PitchShift2D();
 		PitchShift2D(0);
 		PitchShift2D(1);
-		PitchShift2D(2);
-		PitchShift2D(3);
+		//PitchShift2D(2);
+		//PitchShift2D(3);
 
 		// [5] Re-Synthesis
 		//ReSynthesis(gSynMagn, gSynFreq, gSumPhase);
@@ -264,8 +266,8 @@ void TestAudioProcessor::pushNextSampleIntoFifo(float sample) {
 		//2D Version...
 		ReSynthesis2D(0);
 		ReSynthesis2D(1);
-		ReSynthesis2D(2);
-		ReSynthesis2D(3);
+		//ReSynthesis2D(2);
+		//ReSynthesis2D(3);
 
 		//zero negative frequencies....
 		for (k = fftFrameSize + 2; k < 2 * fftFrameSize; k++) gFFTworksp[k] = 0.;

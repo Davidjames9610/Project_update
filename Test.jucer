@@ -3,7 +3,7 @@
 <JUCERPROJECT id="FRKvpy" name="Test" projectType="audioplug" jucerVersion="5.4.3"
               pluginFormats="buildAU,buildStandalone,buildVST3" pluginAUMainType="'aufx'"
               pluginVST3Category="Fx" pluginRTASCategory="0" pluginAAXCategory="0"
-              pluginVSTCategory="kPlugCategEffect">
+              pluginVSTCategory="kPlugCategEffect" pluginCharacteristicsValue="pluginProducesMidiOut,pluginWantsMidiIn">
   <MAINGROUP id="AFImm3" name="Test">
     <GROUP id="{F52D7C2F-6E52-4348-FFB7-231EB725E5A4}" name="Source">
       <FILE id="g9kzZw" name="PluginProcessor.cpp" compile="1" resource="0"

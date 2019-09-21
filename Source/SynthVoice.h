@@ -43,8 +43,8 @@ public:
 
 		//PluginProcessor.getpointer();
 
-		auto string = (String)synth_frequency;
-		DBG(string);
+		//auto string = (String)synth_frequency;
+		//DBG(string);
 		//synth_angle = 0;
 		clearCurrentNote();
 	}

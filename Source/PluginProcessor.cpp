@@ -188,8 +188,8 @@ void TestAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& m
 			sin_currentangle += angledelta;
 
 			//input
-			pushNextSampleIntoFifo(currentsample * level);
-			//pushNextSampleIntoFifo(inputsound[sample]);
+			//pushNextSampleIntoFifo(currentsample * level);
+			pushNextSampleIntoFifo(inputsound[sample]);
 
 			//output
 			//leftbuffer[sample] = (currentsample * level);		
@@ -256,7 +256,7 @@ void TestAudioProcessor::pushNextSampleIntoFifo(float sample) {
 		//PitchShift2D();
 		PitchShift2D(0);
 		PitchShift2D(1);
-		//PitchShift2D(2);
+		PitchShift2D(2);
 		//PitchShift2D(3);
 
 		// [5] Re-Synthesis
@@ -266,7 +266,7 @@ void TestAudioProcessor::pushNextSampleIntoFifo(float sample) {
 		//2D Version...
 		ReSynthesis2D(0);
 		ReSynthesis2D(1);
-		//ReSynthesis2D(2);
+		ReSynthesis2D(2);
 		//ReSynthesis2D(3);
 
 		//zero negative frequencies....
@@ -305,6 +305,8 @@ void TestAudioProcessor::PopulatePitchArray(void) {
 	for (k = 0; k < 6; k++) {
 
 		auto freq_synth = my_synth.getVoice(k);
+		//freq_synth->isVoiceActive;
+	
 		int freq_test = (freq_synth->getCurrentlyPlayingNote());
 		MidiArray[k] = Midi2Hz_Array[freq_test];
 

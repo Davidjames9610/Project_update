@@ -82,13 +82,13 @@ void TestAudioProcessorEditor::resized()
 
 void TestAudioProcessorEditor::sliderValueChanged(Slider* slider) {
 
-	auto volumetmp = midiVolume.getValue() / 130;
-	auto temptmp = (String)volumetmp;
+	//auto volumetmp = midiVolume.getValue() / 130;
+	//auto temptmp = (String)volumetmp;
 	
-	DBG(temptmp);
+	//DBG(temptmp);
 
 	
-	//processor.noteOnVel = midiVolume.getValue() / 130;
+	processor.noteOnVel = midiVolume.getValue() / 130;
 
 	
 

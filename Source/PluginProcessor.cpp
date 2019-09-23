@@ -173,7 +173,7 @@ void TestAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& m
 {
 
 
-	PopulatePitchArray();
+	//PopulatePitchArray();
 
 	my_synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 	auto level = 0.25f;
@@ -188,8 +188,8 @@ void TestAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& m
 			sin_currentangle += angledelta;
 
 			//input
-			//pushNextSampleIntoFifo(currentsample * level);
-			pushNextSampleIntoFifo(inputsound[sample]);
+			pushNextSampleIntoFifo(currentsample * level);
+			//pushNextSampleIntoFifo(inputsound[sample]);
 
 			//output
 			//leftbuffer[sample] = (currentsample * level);		

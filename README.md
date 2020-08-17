@@ -11,7 +11,7 @@ The two inputs are:
 Output:
 - pitchshifted vocals harmonies of the midi notes pressed.
 
-Functionality and ok quality achieved, the plugin was tested in the DAW Fl Studio. 
+Good functionality and quality achieved, the plugin was tested in the DAW Fl Studio. 
 
 
 
